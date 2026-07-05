@@ -1,6 +1,7 @@
 # exynos9611_gcam_patcher
 
 problem statement
+
 the pink tint issues on Exynos9611 when using gcam is annoying, and i find it easier to work with the gcam itself rather than patching the .so xd
 due to the issues that were brought up from this repo issues https://github.com/TBM13/Samsung-Camera-Experiments/issues/23 and the goated guidance from TBM13 himself of ways to fix the pink tint. the module will patch the AsShotNeutral to 1 1 1 on the raw itself so the gcam can process it properly. tbh thats the only thing thats needed to fix the god awful pink tint. the black level can be set in the gcam itself through Black Level settings in the camera lens setting. 115 is quite good for me. adjust yours if needed.
 
@@ -69,8 +70,10 @@ The script will:
 ## Install
 
 1. Ensure SGCAM (`com.samsung.android.scan3d`) is already installed on the device
+   
    Download here https://www.celsoazevedo.com/files/android/google-camera/dev-shamim/f/dl79/
    'SGCAM_8.5.300.XX.10_STABLE_V24_SCAN3D_PACKAGE.apk'( credit to goated shamim )
+
 3. Push `output/SGCAM_DEX_Patcher.zip` to your phone
 4. Flash it via KernelSU Manager → Modules → Install from storage (or Magisk)
 5. Reboot or force-stop SGCAM — the patches take effect on next launch
