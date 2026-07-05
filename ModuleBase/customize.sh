@@ -5,24 +5,32 @@
 ##########################################################################################
 
 SKIPUNZIP=1
-unzip -qjo "$ZIPFILE" 'common/functions.sh' -d $TMPDIR >&2
-. $TMPDIR/functions.sh
 
 ##########################################################################################
-# Config Flags
+# Config Flags  (MUST be set before sourcing functions.sh)
 ##########################################################################################
 
 REPLACE="
 "
 
+# Minimum Android 13 (API 33)
+MINAPI=33
+
 ##########################################################################################
-# Permissions
+# Permissions  (MUST be defined before sourcing functions.sh — MMT calls it inline)
 ##########################################################################################
 
 set_permissions() {
   set_perm_recursive $MODPATH/system/bin 0 0 0755 0755
   set_perm_recursive $MODPATH/system/etc/sgcam-patches 0 0 0644 0644
 }
+
+##########################################################################################
+# Source MMT framework (runs install logic, including set_permissions at the end)
+##########################################################################################
+
+unzip -qjo "$ZIPFILE" 'common/functions.sh' -d $TMPDIR >&2
+. $TMPDIR/functions.sh
 
 ##########################################################################################
 # Installation
@@ -103,11 +111,19 @@ if [ $? -ne 0 ]; then
 fi
 
 # Verify the patched APK is valid
+# Use the exit code of `unzip -t` directly — Toybox unzip (Android 16/SDK 36)
+# does NOT emit InfoZIP's "No errors detected in ..." footer, so grepping for
+# "No errors" produces false failures. The exit code is reliable across
+# Toybox, BusyBox, and InfoZIP.
 ui_print "  [*] Verifying patched APK integrity..."
-unzip -t "$MODPATH/base_patched.apk" 2>&1 | tail -1 | grep -q "No errors"
-if [ $? -ne 0 ]; then
+UNZIP_TEST_OUTPUT=$(unzip -t "$MODPATH/base_patched.apk" 2>&1)
+UNZIP_TEST_EXIT=$?
+if [ $UNZIP_TEST_EXIT -ne 0 ]; then
+  ui_print "  [!] unzip -t failed (exit $UNZIP_TEST_EXIT). Last 10 lines:"
+  echo "$UNZIP_TEST_OUTPUT" | tail -10 | while read line; do ui_print "    $line"; done
   abort "  [!] Patched APK is corrupted!"
 fi
+ui_print "  [*] APK integrity OK"
 
 # Set SELinux context
 chcon u:object_r:apk_data_file:s0 "$MODPATH/base_patched.apk" 2>/dev/null || true
