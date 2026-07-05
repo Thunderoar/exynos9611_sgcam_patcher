@@ -1,0 +1,10 @@
+/output/
+/patches/built_patched.apk
+/patches/original_*.dex
+/patches/patched_*.dex
+__pycache__/
+*.pyc
+/tools/bspatch
+/tools/smali.jar
+/tools/zip
+
