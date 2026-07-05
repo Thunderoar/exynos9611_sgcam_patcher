@@ -12,6 +12,7 @@ Built for **Exynos 9611** devices (Samsung Galaxy A51 / A41 / M31 / M21 / F41 et
 - **Hash-verified** — checks the installed SGCAM's DEX MD5s against `hashes.txt` before patching.
 
 The patches themselves fix:
+
 - Preview lag
 - Auto white balance (AWB)
 - Black levels
@@ -19,7 +20,7 @@ The patches themselves fix:
 
 ## Repository layout
 
-\`\`\`
+```
 sgcam_ksu_module/
 ├── build_module.py                # packager (Python 3)
 ├── ModuleBase/                    # what gets zipped into the flashable module
@@ -43,17 +44,18 @@ sgcam_ksu_module/
 │   └── zip                        # aarch64 zip, pulled from Termux deb
 └── output/
     └── SGCAM_DEX_Patcher.zip      # final flashable module (gitignored)
-\`\`\`
+```
 
 ## Build
 
 Requires Python 3 and the Android NDK (r25+) with `aarch64-linux-android33-clang` on PATH, or `aarch64-linux-gnu-gcc` as a fallback.
 
-\`\`\`bash
+```bash
 python3 build_module.py
-\`\`\`
+```
 
 The script will:
+
 1. Cross-compile `bspatch` from `tools/bspatch.c` against the bundled `libbz2.a` (static, stripped)
 2. Download `zip` from the Termux aarch64 package repo if not already present
 3. Package `ModuleBase/` + binaries + patches into `output/SGCAM_DEX_Patcher.zip`
@@ -66,10 +68,11 @@ The script will:
 4. Reboot or force-stop SGCAM — the patches take effect on next launch
 
 To verify the bind mount is active:
-\`\`\`bash
+
+```bash
 adb shell logcat -d -s SGCAM_Patcher
 # Should see: "Bind mount established: ... -> /data/app/.../base.apk"
-\`\`\`
+```
 
 ## Uninstall
 
@@ -80,10 +83,11 @@ Disable or remove the module in KernelSU Manager. The `uninstall.sh` will `umoun
 The `patches/*.bsdf` files are BSDIFF40-format patches produced by `bsdiff` from `original_classes*.dex` → `patched_classes*.dex`. They are applied at install time (and re-applied at every boot if the bind mount is lost) by the shipped `bspatch` binary.
 
 To regenerate patches after a DEX change:
-\`\`\`bash
+
+```bash
 bsdiff original_classes.dex patched_classes.dex classes.patch.bsdf
 md5sum original_classes.dex >> hashes.txt   # only the original's hash matters
-\`\`\`
+```
 
 ## License
 
