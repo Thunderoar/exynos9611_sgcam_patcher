@@ -46,30 +46,11 @@ def ensure_bspatch():
         print(f"    [!] Install it or place a pre-built bspatch binary at {bspatch_bin}")
         sys.exit(1)
     
-    # Check if bzlib is available, if not build it
+    # Check if bzlib is available - we ship it pre-compiled as libbz2.a + bzlib.h
     bzlib_path = os.path.join(TOOLS_DIR, 'libbz2.a')
-    if not os.path.exists(bzlib_path):
-        print(f"    [*] Building bzip2 for cross-compilation...")
-        # Download bzip2 source
-        bz2_url = "https://sourceware.org/pub/bzip2/bzip2-1.0.8.tar.gz"
-        bz2_tar = os.path.join(TOOLS_DIR, 'bzip2-1.0.8.tar.gz')
-        if not os.path.exists(bz2_tar):
-            print(f"    [*] Downloading bzip2 source...")
-            urllib.request.urlretrieve(bz2_url, bz2_tar)
-        
-        # Extract and build
-        build_dir = os.path.join(TOOLS_DIR, 'bzip2-build')
-        os.makedirs(build_dir, exist_ok=True)
-        subprocess.run(['tar', 'xzf', bz2_tar, '-C', build_dir], check=True)
-        bz2_src = os.path.join(build_dir, 'bzip2-1.0.8')
-        subprocess.run([
-            'make', '-C', bz2_src, 'CC=aarch64-linux-gnu-gcc',
-            'AR=aarch64-linux-gnu-ar', 'RANLIB=aarch64-linux-gnu-ranlib',
-            'libbz2.a'
-        ], check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-        shutil.copy(os.path.join(bz2_src, 'libbz2.a'), bzlib_path)
-        shutil.rmtree(build_dir)
-        os.remove(bz2_tar)
+    bzlib_header = os.path.join(TOOLS_DIR, 'bzlib.h')
+    if not os.path.exists(bzlib_path) or not os.path.exists(bzlib_header):
+        print(f"    [!] ERROR: libbz2.a or bzlib.h not found in tools/")
     
     # Compile bspatch
     cmd = [
