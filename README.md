@@ -11,6 +11,8 @@ the module patch the AsShotNeutral to 1 1 1 on the raw itself so the gcam can pr
 
 this module is SPECIFICALLY FOR SGCAM_8.5.300.XX.10_STABLE_V24_SCAN3D_PACKAGE.apk, do take a look at it on the download section for links, using w other gcam IS NOT GUARANTEED, most likely failed cuz.. its patching the dex directly anyway. and yes! i use ai for lots of the patching and the disecting of the gcam xd or else itd take never xd. also yeah the preview lagged. seems to be related to buffer stuff, something something about full resolution 4000x3000 raw stream filling up the 5 frame buffer. dunno whats up with that, aint takin a look at that for now. i'll post the detail if people want to take a look at it.. if im not lazy later xd , if you want to take a look and have a go on how to patch the gcam, do look in patches/smali/README.md
 
+look in https://xdaforums.com/t/ksu-module-sgcam8-5-exynos9611-sgcam-patcher-pink-tint-fix.4793934/ for further guides
+
 
 
 heres the offical doc not written by me but theyr cool xd
